@@ -113,20 +113,22 @@
 			[self reloadData];
 			return;
 		}
-		
-		[self performBatchUpdates:^{
-			[self deleteSections:self.deletedSectionIndexes];
-			[self insertSections:self.insertedSectionIndexes];
-			
-			[self deleteItemsAtIndexPaths:self.deletedItemIndexPaths];
-			[self insertItemsAtIndexPaths:self.insertedItemIndexPaths];
-			[self reloadItemsAtIndexPaths:self.updatedItemIndexPaths];
-			
-		} completion:^(BOOL finished) {
-			[self clearChanges];
-		}];
-		
-	}	//BIG else
+
+        [self performBatchUpdates:^{
+            [self deleteSections:self.deletedSectionIndexes];
+            [self insertSections:self.insertedSectionIndexes];
+
+            [self deleteItemsAtIndexPaths:self.deletedItemIndexPaths];
+            [self insertItemsAtIndexPaths:self.insertedItemIndexPaths];
+        } completion:^(BOOL finished) {
+            [self performBatchUpdates:^{
+                [self reloadItemsAtIndexPaths:self.updatedItemIndexPaths];
+            } completion:^(BOOL finished) {
+                [self clearChanges];
+            }];
+        }];
+
+    }	//BIG else
 }
 
 - (void)clearChanges {
